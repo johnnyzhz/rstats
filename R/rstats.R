@@ -1,7 +1,7 @@
 rate<-function(package="base", download=NULL, like=NULL, rating=NULL, comment=NULL, meta=TRUE, lib.loc = NULL){
 	dir <- system.file(package = package, lib.loc = lib.loc)
     if (dir == "") {
-		gettextf("You have not installed the package %s. You can only rate a package you installed already. Thanks. ", sQuote(package))
+		gettextf("You have not installed the package %s. You can only rate a package you have installed. Thanks. ", sQuote(package))
 	}else{
 		if (meta){
 			meta <- packageDescription(pkg = package)
@@ -28,13 +28,14 @@ rate<-function(package="base", download=NULL, like=NULL, rating=NULL, comment=NU
 }
 
 view<-function(package="base",comment=FALSE, ncomment=1:5, lib.loc = NULL){
+	comment<-ifelse(comment, 1, 0)
 	dir <- system.file(package = "RCurl", lib.loc = lib.loc)
 	if (dir == ""){
 		URL<-paste('http://rstats.psychstat.org/comments.php?name=',  package, sep='')
 		browseURL(URL)
 	}else{
 		library('RCurl')
-		rating<-getURL(paste('http://rstats.psychstat.org/view.php?name=',  package, sep=''))
+		rating<-getURL(paste('http://rstats.psychstat.org/view.php?name=',  package,  '&comment=', comment, sep=''))
 		rate<-strsplit(rating, "\n")[[1]]
 		nrate<-length(rate)
 		if (nrate>2){
