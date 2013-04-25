@@ -43,9 +43,9 @@ view<-function(package="base",comment=FALSE, ncomment=1:5, lib.loc = NULL){
 			cat("\n")		
 			if (comment){
 				if (nrate==3) stop("No comment available yet")
-				nd<-nrate-3
-				cat("There are ", nd, " comments in total.\n")
-				if (max(ncomment)>nd) ncomment<-1:nd
+				totalcomment<-nrate-3
+				cat("There are ", totalcomment, " comments in total.\n")
+				if (max(ncomment)>totalcomment) ncomment<-1:totalcomment
 				for (i in (ncomment+3)) cat(rate[i], "\n")
 			}
 		}else{
