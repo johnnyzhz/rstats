@@ -1,7 +1,14 @@
 rate<-function(download=NULL, like=NULL, rating=NULL, comment=NULL, meta=TRUE, package, email, name, lib.loc = NULL){
 	## check the package name
 	if (missing(package)){
-	
+		if (is.null(options()$rstats)){
+			stop('Package name is needed. You can provide it in the function or set it use setRstats().')
+		}else{
+			rstats.op<-options()$rstats
+			package <- rstats.op[1]
+			email <- rstats.op[2]
+			user <- rstats.op[3]
+		}
 	}
 	dir <- system.file(package = package, lib.loc = lib.loc)
     if (dir == "") {
