@@ -230,12 +230,20 @@ setRstats<-function(package='base', email='', name=''){
 uniqueID<-function(){
 	## generate a unique id to avoid repeated rating
 	p1<-Sys.getenv()
-	p1<-paste(p1, collapse = '')
+	p1<-paste(p1, collapse = "")
 	p2<-Sys.info()
 	p3<-paste(p2[c(1,2,3,5)],collapse=";")
-	p2<-paste(p2, collapse='')
+	p2<-paste(p2, collapse='')	
+		
+	ind<-Sys.which("ipconfig")
+	if (ind!=""){
+		p5<-system("ipconfig", intern=TRUE)
+	}else{
+		p5<-system("ifconfig", intern=TRUE)
+	}
+	p5<-paste(p5, collapse="")
+	p4<-paste(p1,p2,p5)
 	
-	p4<-paste(p1,p2)
 	n.p4<-nchar(p4)
 	m.p4<-seq(1,n.p4, 3)
 	
@@ -243,5 +251,6 @@ uniqueID<-function(){
 	p4.sub<-p4[m.p4]
 	
 	p4<-paste(p4.sub, collapse='')
+	
 	paste(p3,p4,sep=';')
 }
