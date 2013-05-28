@@ -1,5 +1,5 @@
-\name{view}
-\alias{view}
+\name{viewreply}
+\alias{viewreply}
 %- Also NEED an '\alias' for EACH other topic documented here.
 \title{
 View replies to a question
@@ -8,7 +8,7 @@ View replies to a question
 View replies to a question. See \code{\link{setRstats}} on how to set global options on package information.
 }
 \usage{
-view(id, package, lib.loc = NULL)
+viewreply(id, package, lib.loc = NULL)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{

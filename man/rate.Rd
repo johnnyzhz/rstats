@@ -26,7 +26,7 @@ a character vector describing the location of R library trees to search through,
 }
 \item{meta}{Whether to provide meta information of the R package.}
 }
-\example{
+\examples{
 rate(package="rsem", download=1, rating=5,
      comment="I found the package was useful for analyzing my non-normal missing data.")
 }
