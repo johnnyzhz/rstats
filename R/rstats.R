@@ -35,15 +35,19 @@ rate<-function(download=NULL, like=NULL, rating=NULL, comment=NULL, meta=TRUE, p
 		}else{
 			meta <- "Not provided"
 		}
+		meta<-URLencode(meta,TRUE)
 		if (!is.null(download)) download <- '1'
 		if (!is.null(like)) like <- '1'
 		if (!is.null(rating)){
 			if (!(rating %in% 1:5)) stop('The rating has to be 1 from 5.')
 			rating <- as.character(rating)
+		}else{
+			rating<-'0'
 		}			
 		dir <- system.file(package = "RCurl", lib.loc = lib.loc)
+		comment <- URLencode(comment,TRUE)
 		if (dir == ""){	
-			URL<-paste('http://rstats.psychstat.org/rate.php?package=', package, '&download=', download, '&like=', like, '&rating=', rating, '&email=', email, '&user=', user, '&comment=',URLencode(comment,TRUE), '&meta=', URLencode(meta,TRUE), sep='')
+			URL<-paste('http://rstats.psychstat.org/rate.php?package=', package, '&download=', download, '&like=', like, '&rating=', rating, '&email=', email, '&user=', user, '&comment=',comment, '&meta=', URLencode(meta,TRUE), sep='')
 			browseURL(URL)
 		}else{
 			library('RCurl')
@@ -126,10 +130,11 @@ ask<-function(comment=NULL, package,  email, name, meta=TRUE, lib.loc = NULL){
 		}else{
 			meta <- "Not provided"
 		}
-			
+		meta<-	URLencode(meta,TRUE)
+		comment<-URLencode(comment,TRUE)
 		dir <- system.file(package = "RCurl", lib.loc = lib.loc)
 		if (dir == ""){	
-			URL<-paste('http://rstats.psychstat.org/ask.php?name=', package, '&comment=',URLencode(comment,TRUE), '&email=', email, '&user=', user, '&meta=', URLencode(meta,TRUE), sep='')
+			URL<-paste('http://rstats.psychstat.org/ask.php?name=', package, '&comment=',comment, '&email=', email, '&user=', user, '&meta=', meta, sep='')
 			browseURL(URL)
 		}else{
 			library('RCurl')
@@ -176,10 +181,11 @@ reply<-function(id, comment=NULL, package, email, name, meta=TRUE, lib.loc = NUL
 		}else{
 			meta <- "Not provided"
 		}
-			
+		meta<-URLencode(meta,TRUE)
+		comment<-URLencode(comment,TRUE)
 		dir <- system.file(package = "RCurl", lib.loc = lib.loc)
 		if (dir == ""){	
-			URL<-paste('http://rstats.psychstat.org/reply.php?package=', package, '&comment=',URLencode(comment,TRUE), '&email=', email, '&user=', user, '&meta=', URLencode(meta,TRUE), sep='')
+			URL<-paste('http://rstats.psychstat.org/reply.php?package=', package, '&comment=',comment, '&email=', email, '&user=', user, '&meta=', meta, sep='')
 			browseURL(URL)
 		}else{
 			library('RCurl')
