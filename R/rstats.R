@@ -1,3 +1,5 @@
+
+
 rate<-function(download=NULL, like=NULL, rating=NULL, comment=NULL, meta=TRUE, package, email, name, lib.loc = NULL){
 	## check the package name
 	if (missing(package)){
@@ -29,6 +31,7 @@ rate<-function(download=NULL, like=NULL, rating=NULL, comment=NULL, meta=TRUE, p
     if (dir == "") {
 		gettextf("You have not installed the package %s. You can only rate a package you have installed. Thanks. ", sQuote(package))
 	}else{
+		uid<-URLencode(uniqueID(),TRUE)
 		if (meta){
 			meta <- packageDescription(pkg = package)
 			meta <- paste(meta$Maintainer, ";", meta$Version, ";", meta$Built, ";", meta$Repository)
@@ -47,12 +50,14 @@ rate<-function(download=NULL, like=NULL, rating=NULL, comment=NULL, meta=TRUE, p
 		dir <- system.file(package = "RCurl", lib.loc = lib.loc)
 		comment <- URLencode(comment,TRUE)
 		if (dir == ""){	
-			URL<-paste('http://rstats.psychstat.org/rate.php?package=', package, '&download=', download, '&like=', like, '&rating=', rating, '&email=', email, '&user=', user, '&comment=',comment, '&meta=', URLencode(meta,TRUE), sep='')
+			URL<-paste('http://rstats.psychstat.org/rate.php?package=', package, '&download=', download, '&like=', like, '&rating=', rating, '&email=', email, '&user=', user, '&comment=',comment, '&uid=',uid, '&meta=', URLencode(meta,TRUE), sep='')
 			browseURL(URL)
 		}else{
 			library('RCurl')
-			out<-postForm("http://rstats.psychstat.org/rate.php", package=package, download=download, like=like, rating=rating, comment=comment, email=email, user=user, meta=meta)
+			out<-postForm("http://rstats.psychstat.org/rate.php", package=package, download=download, like=like, rating=rating, comment=comment, email=email, user=user, uid=uid, meta=meta)
 			cat(out)
+			
+			view(TRUE, package=package)
 		}
 	}
 }
@@ -124,6 +129,7 @@ ask<-function(comment=NULL, package,  email, name, meta=TRUE, lib.loc = NULL){
     if (dir == "") {
 		gettextf("You have not installed the package %s. You can only ask a question about a package you have installed. Thanks. ", sQuote(package))
 	}else{
+		uid<-URLencode(uniqueID(),TRUE)
 		if (meta){
 			meta <- packageDescription(pkg = package)
 			meta <- paste(meta$Maintainer, ";", meta$Version, ";", meta$Built, ";", meta$Repository)
@@ -134,11 +140,11 @@ ask<-function(comment=NULL, package,  email, name, meta=TRUE, lib.loc = NULL){
 		comment<-URLencode(comment,TRUE)
 		dir <- system.file(package = "RCurl", lib.loc = lib.loc)
 		if (dir == ""){	
-			URL<-paste('http://rstats.psychstat.org/ask.php?name=', package, '&comment=',comment, '&email=', email, '&user=', user, '&meta=', meta, sep='')
+			URL<-paste('http://rstats.psychstat.org/ask.php?name=', package, '&comment=',comment, '&email=', email, '&user=', user, '&uid=',uid, '&meta=', meta, sep='')
 			browseURL(URL)
 		}else{
 			library('RCurl')
-			out<-postForm("http://rstats.psychstat.org/ask.php", package=package, comment=comment, email=email, user=user, meta=meta)
+			out<-postForm("http://rstats.psychstat.org/ask.php", package=package, comment=comment, email=email, user=user, uid=uid, meta=meta)
 			cat(out)
 		}
 	}
@@ -174,7 +180,7 @@ reply<-function(id, comment=NULL, package, email, name, meta=TRUE, lib.loc = NUL
 			user<-''	
 		}
 	}
-	
+	uid<-URLencode(uniqueID(),TRUE)
 		if (meta){
 			meta <- packageDescription(pkg = package)
 			meta <- paste(meta$Maintainer, ";", meta$Version, ";", meta$Built, ";", meta$Repository)
@@ -185,18 +191,27 @@ reply<-function(id, comment=NULL, package, email, name, meta=TRUE, lib.loc = NUL
 		comment<-URLencode(comment,TRUE)
 		dir <- system.file(package = "RCurl", lib.loc = lib.loc)
 		if (dir == ""){	
-			URL<-paste('http://rstats.psychstat.org/reply.php?package=', package, '&comment=',comment, '&email=', email, '&user=', user, '&meta=', meta, sep='')
+			URL<-paste('http://rstats.psychstat.org/reply.php?package=', package, '&comment=',comment, '&email=', email, '&user=', user, '&uid=',uid, '&meta=', meta, sep='')
 			browseURL(URL)
 		}else{
 			library('RCurl')
-			out<-postForm("http://rstats.psychstat.org/reply.php", package=package, id=as.character(id), comment=comment, email=email, user=user, meta=meta)
+			out<-postForm("http://rstats.psychstat.org/reply.php", package=package, id=as.character(id), comment=comment, email=email, user=user, uid=uid, meta=meta)
 			cat(out)
+			
+			viewreply(id=id, package=package)
 		}
 }
 
 viewreply<-function(id, package, lib.loc = NULL){
 	if (missing(id)) stop('The id of the question or comment is needed! Please use view() function to find out the id.')
-	
+	if (missing(package)){
+		if (is.null(options()$rstats)){
+			stop('Package name is needed. You can provide it in the function or set it use setRstats().')
+		}else{
+			rstats.op<-options()$rstats
+			package <- rstats.op[1]
+		}
+	}
 	dir <- system.file(package = "RCurl", lib.loc = lib.loc)
 	if (dir == ""){
 		URL<-paste('http://rstats.psychstat.org/comments.php?name=',  package, sep='')
@@ -210,4 +225,23 @@ viewreply<-function(id, package, lib.loc = NULL){
 
 setRstats<-function(package='base', email='', name=''){
 	options(rstats=c(package, email,name))
+}
+
+uniqueID<-function(){
+	## generate a unique id to avoid repeated rating
+	p1<-Sys.getenv()
+	p1<-paste(p1, collapse = '')
+	p2<-Sys.info()
+	p3<-paste(p2[c(1,2,3,5)],collapse=";")
+	p2<-paste(p2, collapse='')
+	
+	p4<-paste(p1,p2)
+	n.p4<-nchar(p4)
+	m.p4<-seq(1,n.p4, 3)
+	
+	p4<-unlist(strsplit(p4,''))
+	p4.sub<-p4[m.p4]
+	
+	p4<-paste(p4.sub, collapse='')
+	paste(p3,p4,sep=';')
 }
