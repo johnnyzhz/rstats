@@ -1,14 +1,14 @@
-\name{comment}
-\alias{comment}
+\name{feedback}
+\alias{feedback}
 %- Also NEED an '\alias' for EACH other topic documented here.
 \title{
-Provide comments to a package
+Provide comment/feedback to a package
 }
 \description{
 Provide comments to a package. See \code{\link{setRstats}} on how to set global options on package information.
 }
 \usage{
-comment(comment, package, email, name, meta=TRUE, lib.loc = NULL)
+feedback(comment, package, email, name, meta=TRUE, lib.loc = NULL)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
